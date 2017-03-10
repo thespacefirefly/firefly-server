@@ -23,6 +23,7 @@
     "express": "^4.15.0",
     "firefly-core-libs": "git+https://github.com/thespacefirefly/firefly-core-libs.git",
     "monet": "^0.8.10",
+    "union-type": "^0.3.3",
     "node-fetch": "^1.6.3"
   },
   "devDependencies": {

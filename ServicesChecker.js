@@ -1,14 +1,28 @@
 const Worker = require('firefly-core-libs').Worker;
 
 const monet = require('monet');
+const Type = require('union-type')
 const fetch = require('node-fetch');
 
+const EventEmitter = require('events').EventEmitter; 
+
+const DiscoveryError = Type({
+  BadKeyService: {value: String},
+  ServiceUnreachable: {value: String},
+  UnableToDeleteService: {value: String},
+  SomethingBadWithService: {value: String}
+})
 
 class ServicesChecker extends Worker {
 
   constructor({id, delay, dbCli}) {
     super({id, delay, data:null})
     this.db = dbCli
+    this.eventEmitter = new EventEmitter()
+  }
+
+  on(eventName, doSomeThing) {
+    this.eventEmitter.on(eventName, doSomeThing)
   }
 
   check(data) {
@@ -22,7 +36,9 @@ class ServicesChecker extends Worker {
           .then(serviceMayBe => {
             serviceMayBe.cata(
               () => { 
-                console.log(`😡 something wrong with ${keyService} | null or undefined value`) 
+                let message = `😡 something wrong with ${keyService} | null or undefined value`
+                console.log(message) 
+                this.eventEmitter.emit('error', DiscoveryError.BadKeyService(message))
               },
               (serviceJSONString) => { // call the service
                 // TODO: add header with credential?
@@ -37,21 +53,27 @@ class ServicesChecker extends Worker {
                     console.log(`😺 ${service.url} is active | ${JSON.stringify(data)}`)
                   })
                   .catch(error => {
-                    console.log(`😡 ${service.url} can't be reached | ${error.message}`)
+                    let message = `😡 ${service.url} can't be reached | ${error.message}`
+                    console.log(message)
+                    this.eventEmitter.emit('error', DiscoveryError.ServiceUnreachable(message))
                     // delete service
                     this.db.del(`${service.name}:${service.id}`)
                       .then(serviceMaybe => {
                         console.log(`${service.name}:${service.id} deleted`)
                       })
                       .catch(error => {
-                        console.log(`😡 something wrong when delete $${service.name}:${service.id}`)
+                        let message = `😡 something wrong when delete $${service.name}:${service.id}`
+                        console.log(message)
+                        this.eventEmitter.emit('error', DiscoveryError.UnableToDeleteService(message))
                       })
                   })
               }
             )
           })
           .catch(error => {
-            console.log(`😡 something wrong with ${keyService} | ${error.message}`)
+            let message = `😡 something wrong with ${keyService} | ${error.message}`
+            console.log(message)
+            this.eventEmitter.emit('error', DiscoveryError.SomethingBadWithService(message))
           })
 
       }) // end of forEach
