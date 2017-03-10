@@ -1,0 +1,32 @@
+{
+  "name": "firefly-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha tests/**",
+    "doc": "WIP",
+    "start": "node index.js"    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thespacefirefly/firefly-server.git"
+  },
+  "author": "@k33g_org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thespacefirefly/firefly-server/issues"
+  },
+  "homepage": "https://github.com/thespacefirefly/firefly-server#readme",
+  "dependencies": {
+    "body-parser": "^1.17.0",
+    "express": "^4.15.0",
+    "firefly-core-libs": "git+https://github.com/thespacefirefly/firefly-core-libs.git",
+    "monet": "^0.8.10",
+    "node-fetch": "^1.6.3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
