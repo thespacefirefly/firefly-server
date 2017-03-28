@@ -1,6 +1,6 @@
 
 let routes = ({dbCli, httpPort, checkCredentials, httpApp}) => {
-
+  console.log("👋 ✅ loading routes...")
   return new Promise((resolve, reject) => {
     try {
       
