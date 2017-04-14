@@ -37,7 +37,6 @@ class ServicesChecker extends Worker {
             serviceMayBe.cata(
               () => { 
                 let message = `😡 something wrong with ${keyService} | null or undefined value`
-                console.log(message) 
                 this.eventEmitter.emit('error', DiscoveryError.BadKeyService(message))
               },
               (serviceJSONString) => { // call the service
@@ -54,7 +53,6 @@ class ServicesChecker extends Worker {
                   })
                   .catch(error => {
                     let message = `😡 ${service.url} can't be reached | ${error.message}`
-                    console.log(message)
                     this.eventEmitter.emit('error', DiscoveryError.ServiceUnreachable(message))
                     // delete service
                     this.db.del(`${service.name}:${service.id}`)
@@ -63,7 +61,6 @@ class ServicesChecker extends Worker {
                       })
                       .catch(error => {
                         let message = `😡 something wrong when delete $${service.name}:${service.id}`
-                        console.log(message)
                         this.eventEmitter.emit('error', DiscoveryError.UnableToDeleteService(message))
                       })
                   })
@@ -72,7 +69,6 @@ class ServicesChecker extends Worker {
           })
           .catch(error => {
             let message = `😡 something wrong with ${keyService} | ${error.message}`
-            console.log(message)
             this.eventEmitter.emit('error', DiscoveryError.SomethingBadWithService(message))
           })
 
